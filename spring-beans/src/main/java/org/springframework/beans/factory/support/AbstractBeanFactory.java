@@ -240,11 +240,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(
 			String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
 			throws BeansException {
-
+         // 获取bean的真正name,因为bean的name可能存在别名.
 		String beanName = transformedBeanName(name);
 		Object beanInstance;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		// 主动检查手工注册的单例缓存
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -301,6 +302,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
+				// 保证当前bean所依赖的bean的初始化
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
@@ -321,6 +323,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 				// Create bean instance.
 				if (mbd.isSingleton()) {
+					// 创建bean实例
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							return createBean(beanName, mbd, args);

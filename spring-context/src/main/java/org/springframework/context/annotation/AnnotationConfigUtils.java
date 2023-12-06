@@ -160,13 +160,13 @@ public abstract class AnnotationConfigUtils {
 		}
 
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
-
+         // 为我们容器中注册了解析我们配置类的后置处理器 ConfigurationClassPostProcessor .
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-
+        // 为我们容器中注册了处理 @Autowired 注解的后置处理器.
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);

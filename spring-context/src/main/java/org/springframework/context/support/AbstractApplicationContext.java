@@ -549,7 +549,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			// Prepare this context for refreshing.
 			prepareRefresh();
-
+            // (2) 获取 beanFactory
 			// Tell the subclass to refresh the internal bean factory.
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
@@ -558,13 +558,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 留给子类实现该接口
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
+				// 调用我们的bean工厂的后置处理器. 1. 会在此将class 扫描成beanDefinition类.
+				// 在创建 AnnotatedBeanDefinitionReader 的时候创建了 ConfigurationClassPostProcessor(解析配置类:@Configuration)
 				// Invoke factory processors registered as beans in the context.
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 注册拦截bean创建的bean处理器
 				registerBeanPostProcessors(beanFactory);
 				beanPostProcess.end();
 
@@ -579,7 +583,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Check for listener beans and register them.
 				registerListeners();
-
+				// 实例化剩余的单实例bean
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
 
@@ -911,9 +915,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.setTempClassLoader(null);
 
 		// Allow for caching all bean definition metadata, not expecting further changes.
+		// 允许缓存所有bean定义元数据，不期望进一步更改, 冻结配置类.
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		// 实例化剩余的单实例bean
 		beanFactory.preInstantiateSingletons();
 	}
 

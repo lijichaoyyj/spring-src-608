@@ -506,6 +506,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			// 给BeanPostProcessors一个返回代理而不是目标bean实例的机会
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -1755,14 +1756,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #applyBeanPostProcessorsAfterInitialization
 	 */
 	protected Object initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd) {
+		// 如果我们的Bean实现了xxxAware接口将进行方法回调.
 		invokeAwareMethods(beanName, bean);
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
+			// 调用bean的后置处理器的 postProcessBeforeInitialization方法(初始化前).
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
 		try {
+			// 调用初始化方法
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
 		catch (Throwable ex) {
@@ -1770,6 +1774,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					(mbd != null ? mbd.getResourceDescription() : null), beanName, ex.getMessage(), ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
+			// 调用bean的后置处理器的 postProcessAfterInitialization 方法(初始化后).
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 
